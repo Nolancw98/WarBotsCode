@@ -437,7 +437,8 @@ public class AutonGyro extends LinearOpMode {
             runtime.reset();
             while (opModeIsActive() && (runtime.seconds() < timeoutS) &&
                     (robot.motorFrontLeft.isBusy() && robot.motorFrontRight.isBusy())) {
-                if(currentSpeed <= maxSpeed && runtime.milliseconds() - .250 > oldTime) {
+                if(currentSpeed <= maxSpeed) {
+                    if(robot.motorFrontLeft.getCurrentPosition() % 1120 == 0) //Needs + - value
                     currentSpeed += accelerationConstant;
                     setPower(currentSpeed);
                     oldTime = runtime.milliseconds();
