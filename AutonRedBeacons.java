@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * Created by Anthony on 11/30/2016.
  */
-@Autonomous(name = "AutonRedBeancon", group = "Cool")
+@Autonomous(name = "AutonRedBeacon", group = "Cool")
 public class AutonRedBeacons extends LinearOpMode{
     Hardware10415 robot = new Hardware10415();
     ModernRoboticsI2cGyro gyro = null;
@@ -32,77 +32,31 @@ public class AutonRedBeacons extends LinearOpMode{
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
-    static final int WHITE_COLOR_VALUE = 120;
+    static final double WHITE_COLOR_VALUE = .15;
 
     public void runOpMode() throws InterruptedException {
         robot.init(hardwareMap);
-        gyro = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro");
         colorSensor = (ModernRoboticsI2cColorSensor) hardwareMap.colorSensor.get("colorSensor");
         lineSensor = (ModernRoboticsAnalogOpticalDistanceSensor) hardwareMap.opticalDistanceSensor.get("lineSensor");
         telemetry.addData("Status", "Restting Encoders");
-        gyro.calibrate();
-        while (gyro.isCalibrating()){
-            Thread.sleep(100);
-            idle();
-        }
 
         resetEncoders();
         idle();
         runUsingEncoders();
-        while (!isStarted()) {
-            telemetry.addData(">", "Robot Heading = %d", gyro.getIntegratedZValue());
-            telemetry.update();
-            idle();
-        }
-        gyro.resetZAxisIntegrator();
 
         telemetry.addData("Path0", "Starting");
 
         telemetry.update();
 
         waitForStart();
-        robot.button.setPosition(.45);
-
-        //robot.stopper.setPosition(1);
-        //launcher(1, 5);
-        gyroDrive(DRIVE_SPEED,5,0);
-        gyroTurn(TURN_SPEED,-60); //turn left 60
-        gyroHold(TURN_SPEED,-60,.5);
-        gyroDrive(DRIVE_SPEED, 60,0); //drive to the tile with the white line
-
-        gyroTurn(TURN_SPEED,5);//turn to face the white line (should be about perpendicular to it
-        gyroHold(TURN_SPEED,5,.5);
-        if(findWhiteLine(DRIVE_SPEED/2,24,0,5))
-        {
-            IfRedBeacon(WHITE_COLOR_VALUE);
-        }
-
-        //gyroDrive(DRIVE_SPEED,36,0);
-        //if(findWhiteLine(DRIVE_SPEED/2,12,0,5))
-        //{
-        //    IfRedBeacon(120);
-        //}*/
-
-        //END
-
-        //gyroDrive(DRIVE_SPEED/2.0,12,0); // drive to the while line at slow speed
-
-
-        /*
-        gyroDrive(DRIVE_SPEED, 10, 0);
-        gyroTurn(TURN_SPEED, -10);
-        gyroHold(TURN_SPEED, -10.0, 0.5);
-        gyroDrive(DRIVE_SPEED, 34, -10);
-        gyroTurn(TURN_SPEED, -25);
-        gyroHold(TURN_SPEED, -25, .5);
-        gyroDrive(DRIVE_SPEED, 15, -25);
-        gyroTurn(TURN_SPEED, -45);
-        gyroHold(TURN_SPEED, -45, .5);
-        gyroDrive(DRIVE_SPEED, 20, 180);*/
-        setPower(0);
 
         //launcher(1, 1);
         //launcher(1, 2);
+        encoderDrive(DRIVE_SPEED,5, 5, 2);
+        encoderDrive(TURN_SPEED, 10.25, -10.25, 2);
+        sleep(250);
+        whiteLine(TURN_SPEED, 5);
+        encoderDrive(TURN_SPEED, -10.5, 10.5, 2);
             /*
             encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
             encoderDrive(TURN_SPEED, -4, 4, 4.0);
@@ -114,6 +68,35 @@ public class AutonRedBeacons extends LinearOpMode{
             */
         telemetry.addData("Path", "Complete");
         telemetry.update();
+    }
+    public void whiteLine(double speed, double timeoutS) throws InterruptedException {
+        // Ensure that the opmode is still active
+        if (opModeIsActive()){
+            runUsingEncoders();
+            lineSensor.enableLed(true);
+            // reset the timeout time and start motion.
+            runtime.reset();
+            setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() && (runtime.seconds() < timeoutS) && lineSensor.getRawLightDetected() < WHITE_COLOR_VALUE) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", lineSensor.getRawLightDetected());
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        robot.motorFrontLeft.getCurrentPosition(),
+                        robot.motorFrontRight.getCurrentPosition());
+                telemetry.update();
+
+                // Allow time for other processes to run.
+                idle();
+            }
+
+            // Stop all motion;
+            setPower(0);
+
+            sleep(250);   // optional pause after each move
+        }
     }
 
     public boolean findWhiteLine(double speed, double distance, double angle, int timeOut) throws InterruptedException {

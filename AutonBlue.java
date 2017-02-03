@@ -15,7 +15,7 @@ public class AutonBlue extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1120;
-    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double DRIVE_GEAR_REDUCTION = .5;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
@@ -37,7 +37,7 @@ public class AutonBlue extends LinearOpMode {
 
         waitForStart();
         //robot.stopper.setPosition(1);
-        launcher(.75, 1);
+        launcher(.75, 2);
         launcher(.75, 3);
         //launcher(1, 2);
         encoderDrive(DRIVE_SPEED, 10, 10, 5.0);

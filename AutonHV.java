@@ -8,18 +8,18 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by Anthony on 11/3/2016.
  */
-//@Autonomous(name = "AutonNoBallHV v1.2", group = "Cool")
+@Autonomous(name = "AutonNoBall v1.3", group = "Cool")
 public class AutonHV extends LinearOpMode {
     Hardware10415 robot = new Hardware10415();
 
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1120;
-    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double DRIVE_GEAR_REDUCTION = .5;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    static final double DRIVE_SPEED = .5;
+    static final double DRIVE_SPEED = .2;
     static final double TURN_SPEED = .5;
 
     public void runOpMode() throws InterruptedException {
@@ -39,7 +39,9 @@ public class AutonHV extends LinearOpMode {
 
         encoderDrive(DRIVE_SPEED, 10, 10, 5);//robot.stopper.setPosition(1);
 
-        launcher(1, 5);
+        launcher(5);
+        encoderDrive(DRIVE_SPEED, 52, 52, 5);
+
         //launcher(1, 1);
         //launcher(1, 2);
 
@@ -82,11 +84,13 @@ public class AutonHV extends LinearOpMode {
         robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void launcher(double speed, double timeoutS) throws InterruptedException
+    public void launcher(double timeoutS) throws InterruptedException
     {
         if(opModeIsActive()){
             runUsingEncoders();
             runtime.reset();
+            double voltage = hardwareMap.voltageSensor.get("back").getVoltage();
+            double speed = getScalar(voltage);
             //robot.motorFeeder.setPower(1);
             robot.motorLauncherLeft.setPower(speed);
             robot.motorLauncherRight.setPower(speed);
@@ -103,6 +107,10 @@ public class AutonHV extends LinearOpMode {
         robot.motorLift.setPower(0);
         //robot.motorFeeder.setPower(0);
         sleep(250);
+    }
+    public double getScalar(double voltage)
+    {
+        return (voltage* (-.186)) + 3.38;
     }
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,

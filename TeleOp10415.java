@@ -36,25 +36,10 @@ public class TeleOp10415 extends OpMode {
                 robot.motorLauncherLeft.setMaxSpeed(speedPID);
                 robot.motorLauncherRight.setMaxSpeed(speedPID);
 
-                if(gamepad1.left_bumper)
-                {
-                        robot.button.setPosition(.6);
-                        //robot.motorFeeder.setPower(1);
-                }
-                else if(gamepad1.right_bumper)
-                {
-                        robot.button.setPosition(.4);
-                        //robot.motorFeeder.setPower(-1);
-                }
-                else {
-                        robot.button.setPosition(.5);
-                        //robot.motorFeeder.setPower(0);
-                }
-
                 if(gamepad1.left_trigger > .5)
                 {
-                        left /= 4;
-                        right /= 4;
+                        left /= 2;
+                        right /= 2;
                 }
 
 

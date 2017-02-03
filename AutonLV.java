@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 /**
  * Created by Anthony on 11/3/2016.
  */
-@Autonomous(name = "AutonNoBallLV v1.2", group = "Cool")
+//@Autonomous(name = "AutonNoBallLV v1.2", group = "Cool")
 public class AutonLV extends LinearOpMode {
     Hardware10415 robot = new Hardware10415();
 
@@ -19,7 +19,7 @@ public class AutonLV extends LinearOpMode {
     static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    static final double DRIVE_SPEED = .5;
+    static final double DRIVE_SPEED = .2;
     static final double TURN_SPEED = .5;
 
     public void runOpMode() throws InterruptedException {
@@ -37,10 +37,11 @@ public class AutonLV extends LinearOpMode {
 
         waitForStart();
 
-        encoderDrive(DRIVE_SPEED, 7, 7, 5);//robot.stopper.setPosition(1);
+        encoderDrive(DRIVE_SPEED, 10, 10, 5);//robot.stopper.setPosition(1);
 
         launcher(1, 1);
-        launcher(.8,5);
+        launcher(1,5);
+        encoderDrive(DRIVE_SPEED, 52, 52, 5);
         //launcher(1, 1);
         //launcher(1, 2);
 

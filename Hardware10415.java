@@ -16,9 +16,10 @@ public class Hardware10415
     public DcMotor motorLauncherLeft;
     public DcMotor motorLauncherRight;
     public DcMotor motorLift;
-    //public DcMotor motorCatapult;
+    public DcMotor motorButtonPusher;
+
     public Servo button;
-    //public DcMotor motorFeeder;
+
     HardwareMap hwMap;
 
 
@@ -39,12 +40,11 @@ public class Hardware10415
         motorLauncherLeft = hwMap.dcMotor.get("launcherLeft");
         motorLauncherRight = hwMap.dcMotor.get("launcherRight");
         motorLift = hwMap.dcMotor.get("lift");
-        //motorFeeder = hwMap.dcMotor.get("feeder");
+        motorButtonPusher = hwMap.dcMotor.get("buttonPusher");
 
 
         //Servos
-        button = hwMap.servo.get("button");
-        //teleOpButton = hardwareMap.servo.get("buttonPusher");
+        //button = hwMap.servo.get("button");
 
         //Setting Direction
         motorFrontLeft.setDirection(DcMotor.Direction.REVERSE);

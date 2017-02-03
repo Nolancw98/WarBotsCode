@@ -19,11 +19,11 @@ public class AutonRed extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1120;
-    static final double DRIVE_GEAR_REDUCTION = 1.0;
+    static final double DRIVE_GEAR_REDUCTION = .5;
     static final double WHEEL_DIAMETER_INCHES = 4.0;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.1415);
 
-    static final double DRIVE_SPEED = .5;
+    static final double DRIVE_SPEED = .2;
     static final double TURN_SPEED = .5;
 
     static final double     HEADING_THRESHOLD       = 1 ;      // As tight as we can make it with an integer gyro
@@ -37,12 +37,6 @@ public class AutonRed extends LinearOpMode {
 
 
         telemetry.addData("Status", "Restting Encoders");
-        gyro.calibrate();
-        while (gyro.isCalibrating()){
-            Thread.sleep(50);
-        idle();
-        }
-
         resetEncoders();
         idle();
         runUsingEncoders();
@@ -53,8 +47,8 @@ public class AutonRed extends LinearOpMode {
 
         waitForStart();
         //robot.stopper.setPosition(1);
-        launcher(.75, 1);
-        launcher(.75,3);
+        launcher(2);
+        launcher(3);
         //launcher(1, 1);
         //launcher(1, 2);
         encoderDrive(DRIVE_SPEED, 10, 10, 5.0);
@@ -96,11 +90,13 @@ public class AutonRed extends LinearOpMode {
         robot.motorBackRight.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
-    public void launcher(double speed, double timeoutS) throws InterruptedException
+    public void launcher(double timeoutS) throws InterruptedException
     {
         if(opModeIsActive()){
             runUsingEncoders();
             runtime.reset();
+            double voltage = hardwareMap.voltageSensor.get("back").getVoltage();
+            double speed = getScalar(voltage);
             //robot.motorFeeder.setPower(1);
             robot.motorLauncherLeft.setPower(speed);
             robot.motorLauncherRight.setPower(speed);
@@ -117,6 +113,10 @@ public class AutonRed extends LinearOpMode {
         robot.motorLift.setPower(0);
         //robot.motorFeeder.setPower(0);
         sleep(250);
+    }
+    public double getScalar(double voltage)
+    {
+        return (voltage* (-.186)) + 3.38;
     }
     public void encoderDrive(double speed,
                              double leftInches, double rightInches,
